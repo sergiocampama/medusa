@@ -4,6 +4,7 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
+import { fetchCustomerGroupsStep } from "../../common/steps/fetch-customer-groups"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import { updateLineItemsStepWithSelector } from "../../line-item/steps"
 import { validateCartStep } from "../steps/validate-cart"
@@ -25,12 +26,15 @@ export const updateLineItemInCartWorkflow = createWorkflow(
       return [data.input.item.variant_id]
     })
 
+    const { customer_group_ids } = fetchCustomerGroupsStep(input.cart.customer_id)
+
     // TODO: This is on par with the context used in v1.*, but we can be more flexible.
-    const pricingContext = transform({ cart: input.cart }, (data) => {
+    const pricingContext = transform({ cart: input.cart, customer_group_ids }, (data) => {
       return {
         currency_code: data.cart.currency_code,
         region_id: data.cart.region_id,
         customer_id: data.cart.customer_id,
+        customer_group_id: data.customer_group_ids,
       }
     })
 
