@@ -1,11 +1,11 @@
 import { addToCartWorkflow } from "@medusajs/core-flows"
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { MedusaResponse, MedusaStoreRequest, refetchEntities } from "@medusajs/framework/http"
+import { HttpTypes } from "@medusajs/framework/types"
 import { refetchCart } from "../../helpers"
 import { StoreAddCartLineItemType } from "../../validators"
-import { HttpTypes } from "@medusajs/framework/types"
 
 export const POST = async (
-  req: MedusaRequest<StoreAddCartLineItemType>,
+  req: MedusaStoreRequest<StoreAddCartLineItemType>,
   res: MedusaResponse<HttpTypes.StoreCartResponse>
 ) => {
   const cart = await refetchCart(
@@ -13,6 +13,15 @@ export const POST = async (
     req.scope,
     req.remoteQueryConfig.fields
   )
+
+  const customerGroups = await refetchEntities(
+    "customer_group",
+    { customers: { id: req.auth_context?.actor_id } },
+    req.scope,
+    ["id"]
+  )
+
+  console.log(customerGroups)
 
   const workflowInput = {
     items: [req.validatedBody],

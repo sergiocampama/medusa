@@ -82,6 +82,7 @@ export interface CreateCartWorkflowInputDTO {
 export interface AddToCartWorkflowInputDTO {
   items: CreateCartCreateLineItemDTO[]
   cart: CartWorkflowDTO
+
 }
 
 export interface UpdateCartWorkflowInputDTO {

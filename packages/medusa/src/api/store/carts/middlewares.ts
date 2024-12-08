@@ -72,6 +72,7 @@ export const storeCartRoutesMiddlewares: MiddlewareRoute[] = [
     method: ["POST"],
     matcher: "/store/carts/:id/line-items",
     middlewares: [
+      authenticate("customer", ["session", "bearer"]),
       validateAndTransformBody(StoreAddCartLineItem),
       validateAndTransformQuery(
         StoreGetCartsCart,

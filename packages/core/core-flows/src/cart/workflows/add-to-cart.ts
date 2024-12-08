@@ -8,9 +8,10 @@ import {
   parallelize,
   transform,
   WorkflowData,
-  WorkflowResponse,
+  WorkflowResponse
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "../../common/steps/emit-event"
+import { fetchCustomerGroupsStep } from "../../common/steps/fetch-customer-groups"
 import { useRemoteQueryStep } from "../../common/steps/use-remote-query"
 import {
   createLineItemsStep,
@@ -30,6 +31,7 @@ import { refreshPaymentCollectionForCartWorkflow } from "./refresh-payment-colle
 import { updateCartPromotionsWorkflow } from "./update-cart-promotions"
 import { updateTaxLinesWorkflow } from "./update-tax-lines"
 
+
 export const addToCartWorkflowId = "add-to-cart"
 /**
  * This workflow adds items to a cart.
@@ -43,13 +45,18 @@ export const addToCartWorkflow = createWorkflow(
       return (data.input.items ?? []).map((i) => i.variant_id)
     })
 
+    const { customer_group_ids } = fetchCustomerGroupsStep(input.cart.customer_id)
+
     // TODO: This is on par with the context used in v1.*, but we can be more flexible.
-    const pricingContext = transform({ cart: input.cart }, (data) => {
-      return {
+    const pricingContext = transform({ cart: input.cart, customer_group_ids }, (data) => {
+      const pricingContext = {
         currency_code: data.cart.currency_code,
         region_id: data.cart.region_id,
         customer_id: data.cart.customer_id,
+        customer_group_id: data.customer_group_ids,
       }
+      console.log(pricingContext)
+      return pricingContext
     })
 
     const variants = useRemoteQueryStep({
