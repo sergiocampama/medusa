@@ -1,4 +1,8 @@
-import { FulfillmentOption, IFulfillmentProvider } from "@medusajs/types"
+import {
+  CalculatedShippingOptionPrice,
+  FulfillmentOption,
+  IFulfillmentProvider,
+} from "@medusajs/types"
 
 /**
  * ### constructor
@@ -16,7 +20,7 @@ import { FulfillmentOption, IFulfillmentProvider } from "@medusajs/types"
  *
  * #### Example
  *
- * ```ts
+ * ```ts title="src/modules/my-fulfillment/service.ts"
  * import { AbstractFulfillmentProviderService } from "@medusajs/framework/utils"
  * import { Logger } from "@medusajs/framework/types"
  *
@@ -52,13 +56,11 @@ export class AbstractFulfillmentProviderService
   implements IFulfillmentProvider
 {
   /**
-   * The `identifier` property holds a unique identifier of the fulfillment module provider.
+   * Each fulfillment provider has a unique identifier defined in its class. The provider's ID
+   * will be stored as `fp_{identifier}_{id}`, where `{id}` is the provider's `id`
+   * property in the `medusa-config.ts`.
    *
-   * You can use the kebab-case name of the provider as its value.
-   *
-   * For example:
-   *
-   * ```ts
+   * @example
    * class MyFulfillmentProviderService extends AbstractFulfillmentProviderService {
    *   static identifier = "my-fulfillment"
    *
@@ -221,7 +223,7 @@ export class AbstractFulfillmentProviderService
     optionData: Record<string, unknown>,
     data: Record<string, unknown>,
     context: Record<string, unknown>
-  ): Promise<number> {
+  ): Promise<CalculatedShippingOptionPrice> {
     throw Error("calculatePrice must be overridden by the child class")
   }
 
@@ -345,7 +347,9 @@ export class AbstractFulfillmentProviderService
    *   }
    * }
    */
-  async createReturnFulfillment(fulfillment: Record<string, unknown>): Promise<any> {
+  async createReturnFulfillment(
+    fulfillment: Record<string, unknown>
+  ): Promise<any> {
     throw Error("createReturn must be overridden by the child class")
   }
 
