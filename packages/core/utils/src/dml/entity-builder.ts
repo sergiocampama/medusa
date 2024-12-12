@@ -27,6 +27,7 @@ import { HasMany } from "./relations/has-many"
 import { HasOne } from "./relations/has-one"
 import { HasOneWithForeignKey } from "./relations/has-one-fk"
 import { ManyToMany } from "./relations/many-to-many"
+import { FloatProperty } from "./properties"
 
 /**
  * The implicit properties added by EntityBuilder in every schema
@@ -247,6 +248,26 @@ export class EntityBuilder {
    */
   bigNumber() {
     return new BigNumberProperty()
+  }
+
+  /**
+   * This method defines a float property that allows for
+   * values with decimal places
+   *
+   * @example
+   * import { model } from "@medusajs/framework/utils"
+   *
+   * const MyCustom = model.define("tax", {
+   *   tax_rate: model.float(),
+   *   // ...
+   * })
+   *
+   * export default MyCustom
+   *
+   * @customNamespace Property Types
+   */
+  float() {
+    return new FloatProperty()
   }
 
   /**

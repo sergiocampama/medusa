@@ -1,6 +1,7 @@
 import { CreateShippingOptionTypeDTO } from "./shipping-option-type"
 import { ShippingOptionPriceType } from "../common"
 import { CreateShippingOptionRuleDTO } from "./shipping-option-rule"
+import { CartDTO } from "../../cart"
 
 /**
  * The shipping option to be created.
@@ -118,3 +119,39 @@ export interface UpdateShippingOptionDTO {
  * A shipping option to be created or updated.
  */
 export interface UpsertShippingOptionDTO extends UpdateShippingOptionDTO {}
+
+/**
+ * The data needed for the associated fulfillment provider to calculate the price of a shipping option.
+ */
+export interface CalculateShippingOptionPriceDTO {
+  /**
+   * The ID of the shipping option.
+   */
+  id: string
+
+  /**
+   * The ID of the fulfillment provider.
+   */
+  provider_id: string
+
+  /**
+   * The option data from the provider.
+   */
+  optionData: Record<string, unknown>
+
+  /**
+   * Additional data passed when the price is calculated.
+   *
+   * @example
+   * When calculating the price for a shipping option upon creation of a shipping method additional data can be passed
+   * to the provider.
+   */
+  data: Record<string, unknown>
+
+  /**
+   * The calculation context needed for the associated fulfillment provider to calculate the price of a shipping option.
+   */
+  context: {
+    cart: Pick<CartDTO, "id" | "items" | "shipping_address" | "email">
+  } & Record<string, unknown>
+}

@@ -1,4 +1,5 @@
 import {
+  CalculatedShippingOptionPrice,
   Context,
   DAL,
   FilterableFulfillmentSetProps,
@@ -1992,6 +1993,21 @@ export default class FulfillmentModuleService
       this.fulfillmentProviderService_.canCalculate(
         option.provider_id,
         option as unknown as Record<string, unknown>
+      )
+    )
+
+    return await promiseAll(promises)
+  }
+
+  async calculateShippingOptionsPrices(
+    shippingOptionsData: FulfillmentTypes.CalculateShippingOptionPriceDTO[]
+  ): Promise<CalculatedShippingOptionPrice[]> {
+    const promises = shippingOptionsData.map((data) =>
+      this.fulfillmentProviderService_.calculatePrice(
+        data.provider_id,
+        data.optionData,
+        data.data,
+        data.context
       )
     )
 

@@ -1450,6 +1450,94 @@ describe("Entity builder", () => {
         },
       })
     })
+
+    test("define a float property", () => {
+      const tax = model.define("tax", {
+        id: model.number(),
+        rate: model.float(),
+      })
+
+      expect(tax.name).toEqual("Tax")
+      expect(tax.parse().tableName).toEqual("tax")
+
+      const Tax = toMikroORMEntity(tax)
+      expectTypeOf(new Tax()).toMatchTypeOf<{
+        id: number
+        rate: number
+      }>()
+
+      const metaData = MetadataStorage.getMetadataFromDecorator(Tax)
+      expect(metaData.className).toEqual("Tax")
+      expect(metaData.path).toEqual("Tax")
+
+      expect(metaData.filters).toEqual({
+        softDeletable: {
+          name: "softDeletable",
+          cond: expect.any(Function),
+          default: true,
+          args: false,
+        },
+      })
+
+      expect(metaData.properties).toEqual({
+        id: {
+          reference: "scalar",
+          type: "number",
+          columnType: "integer",
+          name: "id",
+          fieldName: "id",
+          nullable: false,
+          getter: false,
+          setter: false,
+        },
+        rate: {
+          reference: "scalar",
+          type: "number",
+          columnType: "real",
+          name: "rate",
+          fieldName: "rate",
+          serializer: Number,
+          nullable: false,
+          getter: false,
+          setter: false,
+        },
+        created_at: {
+          reference: "scalar",
+          type: "date",
+          columnType: "timestamptz",
+          name: "created_at",
+          fieldName: "created_at",
+          defaultRaw: "now()",
+          onCreate: expect.any(Function),
+          nullable: false,
+          getter: false,
+          setter: false,
+        },
+        updated_at: {
+          reference: "scalar",
+          type: "date",
+          columnType: "timestamptz",
+          name: "updated_at",
+          fieldName: "updated_at",
+          defaultRaw: "now()",
+          onCreate: expect.any(Function),
+          onUpdate: expect.any(Function),
+          nullable: false,
+          getter: false,
+          setter: false,
+        },
+        deleted_at: {
+          reference: "scalar",
+          type: "date",
+          columnType: "timestamptz",
+          name: "deleted_at",
+          fieldName: "deleted_at",
+          nullable: true,
+          getter: false,
+          setter: false,
+        },
+      })
+    })
   })
 
   describe("Entity builder | relationships", () => {
